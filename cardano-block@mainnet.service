@@ -1,0 +1,24 @@
+[Unit]
+Description=Cardano Block Producer node (%i)
+
+[Service]
+Environment="TOPOLOGY=--topology /etc/cardano/%i/topology.json"
+Environment="CONFIG=--config /etc/cardano/%i/config.json"
+Environment="DATABASE=--database-path /var/lib/cardano/%i/db"
+Environment="SOCKET=--socket-path /var/lib/cardano/%i/node.socket"
+Environment="HOSTADDR=--host-addr 127.0.0.1"
+Environment="HOSTIPV6=--host-ipv6-addr ::1"
+Environment="PORT=--port 3001"
+Environment="KES=--shelley-kes-key /etc/cardano/%i/keys/kes.skey"
+Environment="VRF=--shelley-vrf-key /etc/cardano/%i/keys/vrf.skey"
+Environment="CERT=--shelley-operational-certificate /etc/cardano/%i/keys/node.cert"
+Environment="RTS=+RTS -RTS"
+Type=simple
+User=cardano
+Group=cardano
+WorkingDirectory=/var/lib/cardano
+ExecStart=/usr/local/bin/cardano-node run $RTS $TOPOLOGY $CONFIG $DATABASE $SOCKET $HOSTADDR $PORT $KES $VRF $CERT
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
